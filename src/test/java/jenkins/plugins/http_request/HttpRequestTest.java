@@ -18,6 +18,9 @@ import org.junit.Rule;
 
 import org.jvnet.hudson.test.JenkinsRule;
 
+import org.mockserver.client.server.MockServerClient;
+import org.mockserver.junit.MockServerRule;
+
 public class HttpRequestTest {
 
     HttpRequest httpRequest;
@@ -25,6 +28,11 @@ public class HttpRequestTest {
     // Note: The JenkinsRule is required, otherwise the call to getDescriptor causes a null pointer exception
     @Rule
     public JenkinsRule j = new JenkinsRule();
+
+    @Rule
+    public MockServerRule mockServerRule = new MockServerRule(this);
+
+    private MockServerClient mockServerClient;
 
     @Test
     public void defaultValues() throws Exception {
@@ -84,6 +92,23 @@ public class HttpRequestTest {
    @Test
    public void expectMimeType() throws Exception {
        FreeStyleProject project = j.createFreeStyleProject();
+/*
+       new MockServerClient("localhost",1080)
+         .when(
+             request()
+                 .withMethod("GET")
+                 .withPath("/login")
+         )
+         .respond(
+             response()
+                 .withStatusCode(200)
+                 .withHeaders(
+                     new Header("Content-Type", "application/json; charset=utf-8"),
+                     new Header("Cache-Control", "public, max-age=86400")
+                 )
+                 .withBody("{ message: 'incorrect username and password combination' }")
+         );
+*/
        project.getBuildersList().add(new HttpRequest(j.getURL().toString()+"api/json", HttpMode.GET, "",
            MimeType.NOT_SET, MimeType.APPLICATION_JSON,
            "", null, true, false, null, 0, "", ""));

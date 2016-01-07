@@ -3,7 +3,6 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-
         <version>1.609.1</version>
     </parent>
     
@@ -30,13 +29,33 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <configuration>
+                    <pluginFirstClassLoader>true</pluginFirstClassLoader>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.2.2</version>
+            <version>4.5.1</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <!-- Cannot use a more recent because mockserver then depends on bouncycastle which conflicts with Jenkins -->
+            <!-- See https://groups.google.com/d/msg/jenkinsci-dev/YVCIFQAmcqo/9CeH3y-NebUJ -->
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -49,6 +68,7 @@
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/http-request-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/http-request-plugin</url>
     </scm>
+
     <developers>
         <developer>
             <id>janario</id>
