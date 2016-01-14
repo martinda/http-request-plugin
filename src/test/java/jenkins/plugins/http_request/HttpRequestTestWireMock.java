@@ -76,7 +76,7 @@ public class HttpRequestTestWireMock {
        wireMockConfig().notifier(new ConsoleNotifier(true));
 
        // Prepare a response
-       wireMockServer.stubFor(get(urlEqualTo("path"))
+       wireMockServer.stubFor(get(urlEqualTo("/path"))
            .willReturn(aResponse()
                .withHeader("Content-Type", "text/plain")
                .withBody("Hello World")));
