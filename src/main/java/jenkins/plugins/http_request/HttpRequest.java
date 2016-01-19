@@ -208,6 +208,27 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
     public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener)
     throws InterruptedException, IOException
     {
+        HttpResponse response = performHttpRequest(run, workspace, launcher, listener);
+
+        try {
+            final PrintStream logger = listener.getLogger();
+            ResponseContentSupplier responseContentSupplier = new ResponseContentSupplier(response);
+            logResponse(workspace, logger, responseContentSupplier);
+
+            if (!responseCodeIsValid(response, logger)) {
+                throw new AbortException("Response code is invalid. Aborting.");
+            }
+            if (!contentIsValid(responseContentSupplier, logger)) {
+                throw new AbortException("Expected content is not found. Aborting.");
+            }
+        } finally {
+            EntityUtils.consume(response.getEntity());
+        }
+    }
+
+    public HttpResponse performHttpRequest(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener)
+    throws InterruptedException, IOException
+    {
         final PrintStream logger = listener.getLogger();
         this.listener = listener;
         logger.println("HttpMode: " + httpMode);
@@ -242,19 +263,7 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
         }
         final HttpResponse response = clientUtil.execute(httpclient, context, httpRequestBase, logger, timeout);
 
-        try {
-            ResponseContentSupplier responseContentSupplier = new ResponseContentSupplier(response);
-            logResponse(workspace, logger, responseContentSupplier);
-
-            if (!responseCodeIsValid(response, logger)) {
-                throw new AbortException("Response code is invalid. Aborting.");
-            }
-            if (!contentIsValid(responseContentSupplier, logger)) {
-                throw new AbortException("Expected content is not found. Aborting.");
-            }
-        } finally {
-            EntityUtils.consume(response.getEntity());
-        }
+        return response;
     }
 
     private boolean contentIsValid(ResponseContentSupplier responseContentSupplier, PrintStream logger) {
