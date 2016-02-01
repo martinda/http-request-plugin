@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 import com.google.common.primitives.Ints;
@@ -201,6 +200,15 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
     public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener)
     throws InterruptedException, IOException
     {
+        ResponseContentSupplier responseContentSupplier = performHttpRequest(run, listener);
+
+        final PrintStream logger = listener.getLogger();
+        logResponseToFile(workspace, logger, responseContentSupplier);
+    }
+
+    public ResponseContentSupplier performHttpRequest(Run<?,?> run, TaskListener listener)
+    throws InterruptedException, IOException
+    {
         final PrintStream logger = listener.getLogger();
         this.listener = listener;
         logger.println("HttpMode: " + httpMode);
@@ -235,15 +243,16 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
         }
         final HttpResponse response = clientUtil.execute(httpclient, context, httpRequestBase, logger, timeout);
 
-        try {
-            ResponseContentSupplier responseContentSupplier = new ResponseContentSupplier(response);
-            logResponse(workspace, logger, responseContentSupplier);
-
-            responseCodeIsValid(response, logger);
-            contentIsValid(responseContentSupplier, logger);
-        } finally {
-            EntityUtils.consume(response.getEntity());
+        // The HttpEntity is consumed by the ResponseContentSupplier
+        ResponseContentSupplier responseContentSupplier = new ResponseContentSupplier(response);
+        if (consoleLogResponseBody) {
+            logger.println("Response: \n" + responseContentSupplier.getContent());
         }
+
+        responseCodeIsValid(responseContentSupplier, logger);
+        contentIsValid(responseContentSupplier, logger);
+
+        return responseContentSupplier;
     }
 
     private void contentIsValid(ResponseContentSupplier responseContentSupplier, PrintStream logger)
@@ -253,39 +262,36 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
             return;
         }
 
-        String response = responseContentSupplier.get();
+        String response = responseContentSupplier.getContent();
         if (!response.contains(validResponseContent)) {
             throw new AbortException("Fail: Response with length " + response.length() + " doesn't contain '" + validResponseContent + "'");
         }
         return;
     }
 
-    private void responseCodeIsValid(HttpResponse response, PrintStream logger)
+    private void responseCodeIsValid(ResponseContentSupplier response, PrintStream logger)
     throws AbortException
     {
         List<Range<Integer>> ranges = getDescriptor().parseToRange(validResponseCodes);
         for (Range<Integer> range : ranges) {
-            if (range.contains(response.getStatusLine().getStatusCode())) {
+            if (range.contains(response.getStatus())) {
                 logger.println("Success code from " + range);
                 return;
             }
         }
-        throw new AbortException("Fail: the returned code " + response.getStatusLine().getStatusCode()+" is not in the accepted range: "+ranges);
+        throw new AbortException("Fail: the returned code " + response.getStatus()+" is not in the accepted range: "+ranges);
     }
 
-    private void logResponse(FilePath workspace, PrintStream logger, ResponseContentSupplier responseContentSupplier) throws IOException, InterruptedException {
+    private void logResponseToFile(FilePath workspace, PrintStream logger, ResponseContentSupplier responseContentSupplier) throws IOException, InterruptedException {
 
         FilePath outputFilePath = getOutputFilePath(workspace, logger);
 
-        if (consoleLogResponseBody || outputFilePath != null) {
-            if (consoleLogResponseBody) {
-                logger.println("Response: \n" + responseContentSupplier.get());
-            }
-            if (outputFilePath != null && responseContentSupplier.get() != null) {
+        if (outputFilePath != null) {
+            if (outputFilePath != null && responseContentSupplier.getContent() != null) {
                 OutputStream write = null;
                 try {
                     write = outputFilePath.write();
-                    write.write(responseContentSupplier.get().getBytes());
+                    write.write(responseContentSupplier.getContent().getBytes());
                 } finally {
                     if (write != null) {
                         write.close();
@@ -534,28 +540,4 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
         }
     }
 
-    private class ResponseContentSupplier implements Supplier<String> {
-
-        private String content;
-        private final HttpResponse response;
-
-        private ResponseContentSupplier(HttpResponse response) {
-            this.response = response;
-        }
-
-        public String get() {
-            try {
-                if (content == null) {
-                    HttpEntity entity = response.getEntity();
-                    if (entity == null) {
-                        return null;
-                    }
-                    content = EntityUtils.toString(entity);
-                }
-                return content;
-            } catch (IOException e) {
-                return null;
-            }
-        }
-    }
 }
