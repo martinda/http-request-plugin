@@ -2,7 +2,6 @@ package jenkins.plugins.http_request;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 import com.google.common.primitives.Ints;
 
 import hudson.AbortException;
@@ -267,7 +266,7 @@ public final class HttpRequestStep extends AbstractStepImpl {
                 }
 
                 checkArgument(from <= to, "Interval %s should be FROM less than TO", code);
-                validRanges.add(Ranges.closed(from, to));
+                validRanges.add(Range.closed(from, to));
             }
 
             return validRanges;

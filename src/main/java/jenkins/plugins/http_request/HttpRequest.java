@@ -15,7 +15,6 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 import com.google.common.primitives.Ints;
 import hudson.AbortException;
 import hudson.EnvVars;
@@ -520,7 +519,7 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
                 }
 
                 checkArgument(from <= to, "Interval %s should be FROM less than TO", code);
-                validRanges.add(Ranges.closed(from, to));
+                validRanges.add(Range.closed(from, to));
             }
 
             return validRanges;
