@@ -460,6 +460,26 @@ public class HttpRequestTest extends HttpRequestTestBase {
     }
 
     @Test
+    public void nonExistentBasicAuthFailsTheBuild() throws Exception {
+        // Prepare the server
+        final HttpHost target = start();
+        final String baseURL = "http://localhost:" + target.getPort();
+
+        // Prepare HttpRequest
+        HttpRequest httpRequest = new HttpRequest(baseURL+"/basicAuth");
+        httpRequest.setHttpMode(HttpMode.GET);
+        httpRequest.setAuthentication("non-existent-key");
+
+        // Run build
+        FreeStyleProject project = j.createFreeStyleProject();
+        project.getBuildersList().add(httpRequest);
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
+
+        // Check expectations
+        j.assertBuildStatus(Result.FAILURE, build);
+    }
+
+    @Test
     public void canDoBasicDigestAuthentication() throws Exception {
         // Prepare the server
         final HttpHost target = start();
