@@ -462,6 +462,8 @@ public class HttpRequestStepTest extends HttpRequestTestBase {
 
         // Check expectations
         j.assertBuildStatus(Result.SUCCESS, run);
+
+        driver.quit();
     }
 
 /*
