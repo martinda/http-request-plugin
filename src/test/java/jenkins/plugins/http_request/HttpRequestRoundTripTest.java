@@ -23,57 +23,77 @@ public class HttpRequestRoundTripTest {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
+    public static HttpRequest before = new HttpRequest("http://domain/");
+
     @Test
-    public void defaults() throws Exception {
-        HttpRequest httpRequest;
+    public void configRoundtripUrl() throws Exception {
+        configRoundTrip(before);
+    }
 
-        httpRequest = new HttpRequest("http://domain/");
-        System.out.println("configRoundtrip: url");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripHttpMode() throws Exception {
+        before.setHttpMode(HttpMode.GET);
+        configRoundTrip(before);
+    }
 
-        httpRequest.setHttpMode(HttpMode.GET);
-        System.out.println("configRoundtrip: httpMode");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripPassBuildParametersTrue() throws Exception {
+        before.setPassBuildParameters(true);
+        configRoundTrip(before);
+    }
 
-        httpRequest.setPassBuildParameters(true);
-        System.out.println("configRoundtrip: passBuildParameters (true)");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripPassBuildParamtersFalse() throws Exception {
+        before.setPassBuildParameters(false);
+        configRoundTrip(before);
+    }
 
-        httpRequest.setPassBuildParameters(false);
-        System.out.println("configRoundtrip: passBuildParameters (false)");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripValidResponseCodes() throws Exception {
+        before.setValidResponseCodes("100:599");
+        configRoundTrip(before);
+    }
 
-        httpRequest.setValidResponseCodes("100:599");
-        System.out.println("configRoundtrip: validResponseCodes");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripValidResponseContent() throws Exception {
+        before.setValidResponseContent("some content we want to see");
+        configRoundTrip(before);
+    }
 
-        httpRequest.setValidResponseContent("some content we want to see");
-        System.out.println("configRoundtrip: validResponseContent");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripAcceptMimeType() throws Exception {
+        before.setAcceptType(MimeType.TEXT_HTML);
+        configRoundTrip(before);
+    }
 
-        httpRequest.setAcceptType(MimeType.TEXT_HTML);
-        System.out.println("configRoundtrip: acceptType");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripContentMimeType() throws Exception {
+        before.setContentType(MimeType.TEXT_HTML);
+        configRoundTrip(before);
+    }
 
-        httpRequest.setContentType(MimeType.TEXT_HTML);
-        System.out.println("configRoundtrip: contentType");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripOutputFile() throws Exception {
+        before.setOutputFile("myfile.txt");
+        configRoundTrip(before);
+    }
 
-        httpRequest.setOutputFile("myfile.txt");
-        System.out.println("configRoundtrip: outputFile");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripTimeout() throws Exception {
+        before.setTimeout(12);
+        configRoundTrip(before);
+    }
 
-        //httpRequest.setTimeout(12);
-        //System.out.println("configRoundtrip: timeout");
-        //configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripConsoleLogResponseBodyTrue() throws Exception {
+        before.setConsoleLogResponseBody(true);
+        configRoundTrip(before);
+    }
 
-        httpRequest.setConsoleLogResponseBody(true);
-        System.out.println("configRoundtrip: consoleLogResponseBody (true)");
-        configRoundTrip(httpRequest);
-
-        httpRequest.setConsoleLogResponseBody(false);
-        System.out.println("configRoundtrip: consoleLogResponseBody (false)");
-        configRoundTrip(httpRequest);
+    @Test
+    public void configRoundtripConsoleLogResponseBodyFalse() throws Exception {
+        before.setConsoleLogResponseBody(false);
+        configRoundTrip(before);
     }
 
     @Test
@@ -81,7 +101,6 @@ public class HttpRequestRoundTripTest {
         List<BasicDigestAuthentication> bda = new ArrayList<BasicDigestAuthentication>();
         bda.add(new BasicDigestAuthentication("keyname1","username1","password1"));
         bda.add(new BasicDigestAuthentication("keyname2","username2","password2"));
-        HttpRequest before = new HttpRequest("http://foo.bar");
         before.getDescriptor().setBasicDigestAuthentications(bda);
         configRoundTrip(before);
     }
@@ -100,19 +119,16 @@ public class HttpRequestRoundTripTest {
         List<FormAuthentication> formAuthList = new ArrayList<FormAuthentication>();
         formAuthList.add(formAuth);
 
-        HttpRequest before = new HttpRequest("http://foo.bar");
         before.getDescriptor().setFormAuthentications(formAuthList);
         configRoundTrip(before);
     }
 
     @Test
     public void customHeaders() throws Exception {
-        HttpRequest httpRequest;
         List<NameValuePair> customHeaders = new ArrayList<NameValuePair>();
         customHeaders.add(new NameValuePair("param1","value1"));
-        httpRequest = new HttpRequest("http://foo.bar");
-        httpRequest.setCustomHeaders(customHeaders);
-        configRoundTrip(httpRequest);
+        before.setCustomHeaders(customHeaders);
+        configRoundTrip(before);
     }
 
     private void configRoundTrip(HttpRequest before) throws Exception {

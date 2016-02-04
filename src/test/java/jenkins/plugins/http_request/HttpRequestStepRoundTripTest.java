@@ -21,34 +21,57 @@ public class HttpRequestStepRoundTripTest {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
+    public static HttpRequestStep before = new HttpRequestStep("http://domain/");
+
     @Test
-    public void configRoundTrip() throws Exception {
-        HttpRequestStep before;
-
-        before = new HttpRequestStep("http://domain/");
+    public void configRoundTripUrl() throws Exception {
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripHttpMode() throws Exception {
         before.setHttpMode(HttpMode.GET);
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripResponseCodes() throws Exception {
         before.setValidResponseCodes("100:599");
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripResponseContent() throws Exception {
         before.setValidResponseContent("some content we want to see");
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripAcceptType() throws Exception {
         before.setAcceptType(MimeType.TEXT_HTML);
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripContentType() throws Exception {
         before.setContentType(MimeType.TEXT_HTML);
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripTiemout() throws Exception {
         before.setTimeout(12);
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripConsoleLogResponseBodyTrue() throws Exception {
         before.setConsoleLogResponseBody(true);
         configRoundTrip(before);
+    }
 
+    @Test
+    public void configRoundtripConsoleLogReponseBodyFalse() throws Exception {
         before.setConsoleLogResponseBody(false);
         configRoundTrip(before);
     }
@@ -58,7 +81,6 @@ public class HttpRequestStepRoundTripTest {
         List<BasicDigestAuthentication> bda = new ArrayList<BasicDigestAuthentication>();
         bda.add(new BasicDigestAuthentication("keyname1","username1","password1"));
         bda.add(new BasicDigestAuthentication("keyname2","username2","password2"));
-        HttpRequestStep before = new HttpRequestStep("http://foo.bar");
         before.getDescriptor().setBasicDigestAuthentications(bda);
         configRoundTrip(before);
     }
@@ -77,19 +99,16 @@ public class HttpRequestStepRoundTripTest {
         List<FormAuthentication> formAuthList = new ArrayList<FormAuthentication>();
         formAuthList.add(formAuth);
 
-        HttpRequestStep before = new HttpRequestStep("http://foo.bar");
         before.getDescriptor().setFormAuthentications(formAuthList);
         configRoundTrip(before);
     }
 
     @Test
     public void customHeaders() throws Exception {
-        HttpRequestStep httpRequest;
         List<NameValuePair> customHeaders = new ArrayList<NameValuePair>();
         customHeaders.add(new NameValuePair("param1","value1"));
-        httpRequest = new HttpRequestStep("http://foo.bar");
-        httpRequest.setCustomHeaders(customHeaders);
-        configRoundTrip(httpRequest);
+        before.setCustomHeaders(customHeaders);
+        configRoundTrip(before);
     }
 
     private void configRoundTrip(HttpRequestStep before) throws Exception {
