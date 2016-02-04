@@ -461,9 +461,12 @@ public class HttpRequestStepTest extends HttpRequestTestBase {
         WorkflowRun run = proj.scheduleBuild2(0).get();
 
         // Check expectations
-        j.assertBuildStatus(Result.SUCCESS, run);
-
-        driver.quit();
+        try {
+            j.assertBuildStatus(Result.SUCCESS, run);
+        } finally {
+            driver.close();
+            driver.quit();
+        }
     }
 
 /*
