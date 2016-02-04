@@ -41,7 +41,6 @@ import jenkins.plugins.http_request.auth.FormAuthentication;
 import jenkins.plugins.http_request.util.HttpClientUtil;
 import jenkins.plugins.http_request.util.NameValuePair;
 import jenkins.plugins.http_request.util.RequestAction;
-import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -59,7 +58,7 @@ import org.kohsuke.stapler.StaplerRequest;
 /**
  * @author Janario Oliveira
  */
-public class HttpRequest extends Builder implements SimpleBuildStep {
+public class HttpRequest extends Builder {
 
     private @Nonnull String url;
     private HttpMode httpMode                 = DescriptorImpl.defaultHttpMode;
@@ -196,13 +195,14 @@ public class HttpRequest extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener)
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener)
     throws InterruptedException, IOException
     {
-        ResponseContentSupplier responseContentSupplier = performHttpRequest(run, listener);
+        ResponseContentSupplier responseContentSupplier = performHttpRequest(build, listener);
 
         final PrintStream logger = listener.getLogger();
-        logResponseToFile(workspace, logger, responseContentSupplier);
+        logResponseToFile(build.getWorkspace(), logger, responseContentSupplier);
+        return true;
     }
 
     public ResponseContentSupplier performHttpRequest(Run<?,?> run, TaskListener listener)
