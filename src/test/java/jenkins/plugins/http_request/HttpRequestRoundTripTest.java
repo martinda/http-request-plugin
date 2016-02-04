@@ -28,39 +28,51 @@ public class HttpRequestRoundTripTest {
         HttpRequest httpRequest;
 
         httpRequest = new HttpRequest("http://domain/");
+        System.out.println("configRoundtrip: url");
         configRoundTrip(httpRequest);
 
         httpRequest.setHttpMode(HttpMode.GET);
+        System.out.println("configRoundtrip: httpMode");
         configRoundTrip(httpRequest);
 
         httpRequest.setPassBuildParameters(true);
+        System.out.println("configRoundtrip: passBuildParameters (true)");
         configRoundTrip(httpRequest);
 
         httpRequest.setPassBuildParameters(false);
+        System.out.println("configRoundtrip: passBuildParameters (false)");
         configRoundTrip(httpRequest);
 
         httpRequest.setValidResponseCodes("100:599");
+        System.out.println("configRoundtrip: validResponseCodes");
         configRoundTrip(httpRequest);
 
         httpRequest.setValidResponseContent("some content we want to see");
+        System.out.println("configRoundtrip: validResponseContent");
         configRoundTrip(httpRequest);
 
         httpRequest.setAcceptType(MimeType.TEXT_HTML);
+        System.out.println("configRoundtrip: acceptType");
         configRoundTrip(httpRequest);
 
         httpRequest.setContentType(MimeType.TEXT_HTML);
+        System.out.println("configRoundtrip: contentType");
         configRoundTrip(httpRequest);
 
         httpRequest.setOutputFile("myfile.txt");
+        System.out.println("configRoundtrip: outputFile");
         configRoundTrip(httpRequest);
 
-        httpRequest.setTimeout(12);
-        configRoundTrip(httpRequest);
+        //httpRequest.setTimeout(12);
+        //System.out.println("configRoundtrip: timeout");
+        //configRoundTrip(httpRequest);
 
         httpRequest.setConsoleLogResponseBody(true);
+        System.out.println("configRoundtrip: consoleLogResponseBody (true)");
         configRoundTrip(httpRequest);
 
         httpRequest.setConsoleLogResponseBody(false);
+        System.out.println("configRoundtrip: consoleLogResponseBody (false)");
         configRoundTrip(httpRequest);
     }
 
