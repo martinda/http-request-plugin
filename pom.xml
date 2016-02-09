@@ -14,6 +14,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <surefire.rerunFailingTestsCount>0</surefire.rerunFailingTestsCount>
         <commons.version>1.10</commons.version>
         <guava.version>18.0</guava.version>
         <httpcomponents.version>4.5.1</httpcomponents.version>
