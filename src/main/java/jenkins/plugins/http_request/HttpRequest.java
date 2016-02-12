@@ -61,17 +61,17 @@ import org.kohsuke.stapler.StaplerRequest;
 public class HttpRequest extends Builder {
 
     private @Nonnull String url;
-    private HttpMode httpMode                 = DescriptorImpl.defaultHttpMode;
-    private Boolean passBuildParameters       = DescriptorImpl.defaultPassBuildParameters;
-    private String validResponseCodes         = DescriptorImpl.defaultValidResponseCodes;
-    private String validResponseContent       = DescriptorImpl.defaultValidResponseContent;
-    private MimeType acceptType               = DescriptorImpl.defaultAcceptType;
-    private MimeType contentType              = DescriptorImpl.defaultContentType;
-    private String outputFile                 = DescriptorImpl.defaultOutputFile;
-    private Integer timeout                   = DescriptorImpl.defaultTimeout;
-    private Boolean consoleLogResponseBody    = DescriptorImpl.defaultConsoleLogResponseBody;
-    private String authentication             = DescriptorImpl.defaultAuthentication;
-    private List<NameValuePair> customHeaders = DescriptorImpl.defaultCustomHeaders;
+    private HttpMode httpMode                 = DescriptorImpl.httpMode;
+    private Boolean passBuildParameters       = DescriptorImpl.passBuildParameters;
+    private String validResponseCodes         = DescriptorImpl.validResponseCodes;
+    private String validResponseContent       = DescriptorImpl.validResponseContent;
+    private MimeType acceptType               = DescriptorImpl.acceptType;
+    private MimeType contentType              = DescriptorImpl.contentType;
+    private String outputFile                 = DescriptorImpl.outputFile;
+    private Integer timeout                   = DescriptorImpl.timeout;
+    private Boolean consoleLogResponseBody    = DescriptorImpl.consoleLogResponseBody;
+    private String authentication             = DescriptorImpl.authentication;
+    private List<NameValuePair> customHeaders = DescriptorImpl.customHeaders;
 
     private TaskListener listener;
 
@@ -369,17 +369,17 @@ public class HttpRequest extends Builder {
 
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-        public static final HttpMode defaultHttpMode                  = HttpMode.POST;
-        public static final Boolean  defaultPassBuildParameters       = false;
-        public static final String   defaultValidResponseCodes        = "100:399";
-        public static final String   defaultValidResponseContent      = "";
-        public static final MimeType defaultAcceptType                = MimeType.NOT_SET;
-        public static final MimeType defaultContentType               = MimeType.NOT_SET;
-        public static final String   defaultOutputFile                = "";
-        public static final int      defaultTimeout                   = 0;
-        public static final Boolean  defaultConsoleLogResponseBody    = false;
-        public static final String   defaultAuthentication            = "";
-        public static final List <NameValuePair> defaultCustomHeaders = Collections.<NameValuePair>emptyList();
+        public static final HttpMode httpMode                  = HttpMode.POST;
+        public static final Boolean  passBuildParameters       = false;
+        public static final String   validResponseCodes        = "100:399";
+        public static final String   validResponseContent      = "";
+        public static final MimeType acceptType                = MimeType.NOT_SET;
+        public static final MimeType contentType               = MimeType.NOT_SET;
+        public static final String   outputFile                = "";
+        public static final int      timeout                   = 0;
+        public static final Boolean  consoleLogResponseBody    = false;
+        public static final String   authentication            = "";
+        public static final List <NameValuePair> customHeaders = Collections.<NameValuePair>emptyList();
 
         public DescriptorImpl() {
             load();
@@ -403,30 +403,16 @@ public class HttpRequest extends Builder {
             return true;
         }
 
-        public ListBoxModel doFillDefaultHttpModeItems() {
-            return HttpMode.getFillItems();
-        }
-
         public ListBoxModel doFillHttpModeItems() {
             return HttpMode.getFillItems();
         }
 
-        public ListBoxModel doFillDefaultContentTypeItems() {
+        public ListBoxModel doFillAcceptTypeItems() {
             return MimeType.getContentTypeFillItems();
         }
 
         public ListBoxModel doFillContentTypeItems() {
-            ListBoxModel items = MimeType.getContentTypeFillItems();
-            return items;
-        }
-
-        public ListBoxModel doFillDefaultAcceptTypeItems() {
             return MimeType.getContentTypeFillItems();
-        }
-
-        public ListBoxModel doFillAcceptTypeItems() {
-            ListBoxModel items = MimeType.getContentTypeFillItems();
-            return items;
         }
 
         public ListBoxModel doFillAuthenticationItems() {
@@ -445,7 +431,6 @@ public class HttpRequest extends Builder {
         public FormValidation doCheckUrl(@QueryParameter String value)
                 throws IOException, ServletException {
             return FormValidation.ok();
-            // return HttpRequestValidation.checkUrl(value);
         }
 
         public FormValidation doValidateKeyName(@QueryParameter String value) {
