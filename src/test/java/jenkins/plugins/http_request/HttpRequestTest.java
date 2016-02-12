@@ -493,7 +493,7 @@ public class HttpRequestTest extends HttpRequestTestBase {
         // Prepare HttpRequest
         HttpRequest httpRequest = new HttpRequest(baseURL+"/basicAuth");
         httpRequest.setHttpMode(HttpMode.GET);
-        httpRequest.getDescriptor().setBasicDigestAuthentications(bda);
+        HttpRequestGlobalConfig.get().setBasicDigestAuthentications(bda);
         httpRequest.setAuthentication("keyname1");
 
         // Run build
@@ -527,7 +527,7 @@ public class HttpRequestTest extends HttpRequestTestBase {
         // Prepare HttpRequest
         HttpRequest httpRequest = new HttpRequest(baseURL+"/formAuth");
         httpRequest.setHttpMode(HttpMode.GET);
-        httpRequest.getDescriptor().setFormAuthentications(formAuthList);
+        HttpRequestGlobalConfig.get().setFormAuthentications(formAuthList);
         httpRequest.setAuthentication("keyname");
 
         // Run build
@@ -562,7 +562,7 @@ public class HttpRequestTest extends HttpRequestTestBase {
         HttpRequest httpRequest = new HttpRequest(baseURL+"/formAuthBad");
         httpRequest.setHttpMode(HttpMode.GET);
         httpRequest.setConsoleLogResponseBody(true);
-        httpRequest.getDescriptor().setFormAuthentications(formAuthList);
+        HttpRequestGlobalConfig.get().setFormAuthentications(formAuthList);
         httpRequest.setAuthentication("keyname");
 
         // Run build
@@ -599,7 +599,7 @@ public class HttpRequestTest extends HttpRequestTestBase {
         HttpRequest httpRequest = new HttpRequest(baseURL+"/non-existent");
         httpRequest.setHttpMode(HttpMode.GET);
         httpRequest.setConsoleLogResponseBody(true);
-        httpRequest.getDescriptor().setFormAuthentications(formAuthList);
+        HttpRequestGlobalConfig.get().setFormAuthentications(formAuthList);
 
         // Select a non-existent form authentication, this will error the build before any request is made
         httpRequest.setAuthentication("non-existent");
