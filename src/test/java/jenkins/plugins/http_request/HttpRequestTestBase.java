@@ -137,7 +137,7 @@ public class HttpRequestTestBase extends LocalServerTestBase {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setupTest() throws Exception {
         super.setUp();
 
         for (HttpMode httpMode : HttpMode.values()) {
@@ -302,7 +302,7 @@ public class HttpRequestTestBase extends LocalServerTestBase {
     }
 
     @After
-    public void shutDown() throws Exception {
+    public void afterTest() throws Exception {
         Executor.closeIdleConnections();
         super.shutDown();
     }
