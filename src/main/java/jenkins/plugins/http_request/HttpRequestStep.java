@@ -146,8 +146,8 @@ public final class HttpRequestStep extends AbstractStepImpl {
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
     }
-
-    @Extension public static final class DescriptorImpl extends AbstractStepDescriptorImpl {
+    @Extension
+    public static final class DescriptorImpl extends AbstractStepDescriptorImpl {
         public static final HttpMode httpMode                  = HttpMode.GET;
         public static final Boolean  passBuildParameters       = false;
         public static final String   validResponseCodes        = "100:399";
@@ -159,45 +159,16 @@ public final class HttpRequestStep extends AbstractStepImpl {
         public static final String   authentication            = "";
         public static final List <NameValuePair> customHeaders = Collections.<NameValuePair>emptyList();
 
-        private List<BasicDigestAuthentication> basicDigestAuthentications = new ArrayList<BasicDigestAuthentication>();
-        private List<FormAuthentication> formAuthentications = new ArrayList<FormAuthentication>();
-
         public DescriptorImpl() {
             super(Execution.class);
         }
 
-        public List<BasicDigestAuthentication> getBasicDigestAuthentications() {
-            return basicDigestAuthentications;
+        @Override public String getFunctionName() {
+            return "httpRequest";
         }
 
-        public void setBasicDigestAuthentications(
-                List<BasicDigestAuthentication> basicDigestAuthentications) {
-            this.basicDigestAuthentications = basicDigestAuthentications;
-        }
-
-        public List<FormAuthentication> getFormAuthentications() {
-            return formAuthentications;
-        }
-
-        public void setFormAuthentications(
-                List<FormAuthentication> formAuthentications) {
-            this.formAuthentications = formAuthentications;
-        }
-
-        public List<Authenticator> getAuthentications() {
-            List<Authenticator> list = new ArrayList<Authenticator>();
-            list.addAll(basicDigestAuthentications);
-            list.addAll(formAuthentications);
-            return list;
-        }
-
-        public Authenticator getAuthentication(String keyName) {
-            for (Authenticator authenticator : getAuthentications()) {
-                if (authenticator.getKeyName().equals(keyName)) {
-                    return authenticator;
-                }
-            }
-            return null;
+        @Override public String getDisplayName() {
+            return "Perform an HTTP Request and return a response object";
         }
 
         public ListBoxModel doFillHttpModeItems() {
@@ -205,22 +176,20 @@ public final class HttpRequestStep extends AbstractStepImpl {
         }
 
         public ListBoxModel doFillAcceptTypeItems() {
-            ListBoxModel items = MimeType.getContentTypeFillItems();
-            return items;
+            return MimeType.getContentTypeFillItems();
         }
 
         public ListBoxModel doFillContentTypeItems() {
-            ListBoxModel items = MimeType.getContentTypeFillItems();
-            return items;
+            return MimeType.getContentTypeFillItems();
         }
 
         public ListBoxModel doFillAuthenticationItems() {
             ListBoxModel items = new ListBoxModel();
             items.add("");
-            for (BasicDigestAuthentication basicDigestAuthentication : basicDigestAuthentications) {
+            for (BasicDigestAuthentication basicDigestAuthentication : HttpRequestGlobalConfig.get().getBasicDigestAuthentications()) {
                 items.add(basicDigestAuthentication.getKeyName());
             }
-            for (FormAuthentication formAuthentication : formAuthentications) {
+            for (FormAuthentication formAuthentication : HttpRequestGlobalConfig.get().getFormAuthentications()) {
                 items.add(formAuthentication.getKeyName());
             }
 
@@ -233,7 +202,7 @@ public final class HttpRequestStep extends AbstractStepImpl {
         }
 
         public FormValidation doValidateKeyName(@QueryParameter String value) {
-            List<Authenticator> list = getAuthentications();
+            List<Authenticator> list = HttpRequestGlobalConfig.get().getAuthentications();
 
             int count = 0;
             for (Authenticator basicAuthentication : list) {
@@ -283,22 +252,6 @@ public final class HttpRequestStep extends AbstractStepImpl {
                 return FormValidation.error(iae.getMessage());
             }
             return FormValidation.ok();
-        }
-
-        @Override public String getFunctionName() {
-            return "httpRequest";
-        }
-
-        @Override public String getDisplayName() {
-            return "Perform an HTTP Request and return a response object";
-        }
-
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject formData) throws
-                FormException {
-            req.bindJSON(this, formData);
-            save();
-            return true;
         }
 
     }
