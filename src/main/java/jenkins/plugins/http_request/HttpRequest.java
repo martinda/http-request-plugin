@@ -232,7 +232,7 @@ public class HttpRequest extends Builder {
         HttpContext context = new BasicHttpContext();
 
         if (authentication != null && !authentication.isEmpty()) {
-            final Authenticator auth = getDescriptor().getAuthentication(authentication);
+            final Authenticator auth = HttpRequestGlobalConfig.get().getAuthentication(authentication);
             if (auth == null) {
                 throw new IllegalStateException("Authentication '" + authentication + "' doesn't exist anymore");
             }
@@ -381,45 +381,8 @@ public class HttpRequest extends Builder {
         public static final String   defaultAuthentication            = "";
         public static final List <NameValuePair> defaultCustomHeaders = Collections.<NameValuePair>emptyList();
 
-        private List<BasicDigestAuthentication> basicDigestAuthentications = new ArrayList<BasicDigestAuthentication>();
-        private List<FormAuthentication> formAuthentications = new ArrayList<FormAuthentication>();
-
         public DescriptorImpl() {
             load();
-        }
-
-        public List<BasicDigestAuthentication> getBasicDigestAuthentications() {
-            return basicDigestAuthentications;
-        }
-
-        public void setBasicDigestAuthentications(
-                List<BasicDigestAuthentication> basicDigestAuthentications) {
-            this.basicDigestAuthentications = basicDigestAuthentications;
-        }
-
-        public List<FormAuthentication> getFormAuthentications() {
-            return formAuthentications;
-        }
-
-        public void setFormAuthentications(
-                List<FormAuthentication> formAuthentications) {
-            this.formAuthentications = formAuthentications;
-        }
-
-        public List<Authenticator> getAuthentications() {
-            List<Authenticator> list = new ArrayList<Authenticator>();
-            list.addAll(basicDigestAuthentications);
-            list.addAll(formAuthentications);
-            return list;
-        }
-
-        public Authenticator getAuthentication(String keyName) {
-            for (Authenticator authenticator : getAuthentications()) {
-                if (authenticator.getKeyName().equals(keyName)) {
-                    return authenticator;
-                }
-            }
-            return null;
         }
 
         @Override
@@ -469,10 +432,10 @@ public class HttpRequest extends Builder {
         public ListBoxModel doFillAuthenticationItems() {
             ListBoxModel items = new ListBoxModel();
             items.add("");
-            for (BasicDigestAuthentication basicDigestAuthentication : basicDigestAuthentications) {
+            for (BasicDigestAuthentication basicDigestAuthentication : HttpRequestGlobalConfig.get().getBasicDigestAuthentications()) {
                 items.add(basicDigestAuthentication.getKeyName());
             }
-            for (FormAuthentication formAuthentication : formAuthentications) {
+            for (FormAuthentication formAuthentication : HttpRequestGlobalConfig.get().getFormAuthentications()) {
                 items.add(formAuthentication.getKeyName());
             }
 
@@ -486,7 +449,7 @@ public class HttpRequest extends Builder {
         }
 
         public FormValidation doValidateKeyName(@QueryParameter String value) {
-            List<Authenticator> list = getAuthentications();
+            List<Authenticator> list = HttpRequestGlobalConfig.get().getAuthentications();
 
             int count = 0;
             for (Authenticator basicAuthentication : list) {
