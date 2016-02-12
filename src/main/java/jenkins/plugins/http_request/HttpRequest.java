@@ -395,14 +395,6 @@ public class HttpRequest extends Builder {
             return "HTTP Request";
         }
 
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject formData) throws
-                FormException {
-            req.bindJSON(this, formData);
-            save();
-            return true;
-        }
-
         public ListBoxModel doFillHttpModeItems() {
             return HttpMode.getFillItems();
         }
