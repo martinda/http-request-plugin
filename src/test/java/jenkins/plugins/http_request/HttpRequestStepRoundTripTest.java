@@ -81,7 +81,7 @@ public class HttpRequestStepRoundTripTest {
         List<BasicDigestAuthentication> bda = new ArrayList<BasicDigestAuthentication>();
         bda.add(new BasicDigestAuthentication("keyname1","username1","password1"));
         bda.add(new BasicDigestAuthentication("keyname2","username2","password2"));
-        before.getDescriptor().setBasicDigestAuthentications(bda);
+        HttpRequestGlobalConfig.get().setBasicDigestAuthentications(bda);
         configRoundTrip(before);
     }
 
@@ -99,7 +99,7 @@ public class HttpRequestStepRoundTripTest {
         List<FormAuthentication> formAuthList = new ArrayList<FormAuthentication>();
         formAuthList.add(formAuth);
 
-        before.getDescriptor().setFormAuthentications(formAuthList);
+        HttpRequestGlobalConfig.get().setFormAuthentications(formAuthList);
         configRoundTrip(before);
     }
 
@@ -133,8 +133,8 @@ public class HttpRequestStepRoundTripTest {
         }
 
         // Basic authentication check
-        List<BasicDigestAuthentication> beforeBdas = before.getDescriptor().getBasicDigestAuthentications();
-        List<BasicDigestAuthentication> afterBdas  = after.getDescriptor().getBasicDigestAuthentications();
+        List<BasicDigestAuthentication> beforeBdas = HttpRequestGlobalConfig.get().getBasicDigestAuthentications();
+        List<BasicDigestAuthentication> afterBdas  = HttpRequestGlobalConfig.get().getBasicDigestAuthentications();
         assertEquals(beforeBdas.size(), afterBdas.size());
         for (int idx = 0; idx < beforeBdas.size(); idx++) {
             BasicDigestAuthentication beforeBda = beforeBdas.get(idx);
@@ -145,8 +145,8 @@ public class HttpRequestStepRoundTripTest {
         }
 
         // Form authentication check
-        List<FormAuthentication> beforeFas = before.getDescriptor().getFormAuthentications();
-        List<FormAuthentication> afterFas  = after.getDescriptor().getFormAuthentications();
+        List<FormAuthentication> beforeFas = HttpRequestGlobalConfig.get().getFormAuthentications();
+        List<FormAuthentication> afterFas  = HttpRequestGlobalConfig.get().getFormAuthentications();
         assertEquals(beforeFas.size(), afterFas.size());
         for (int idx = 0; idx < beforeFas.size(); idx++) {
             FormAuthentication beforeFa = beforeFas.get(idx);
