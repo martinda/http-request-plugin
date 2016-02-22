@@ -8,6 +8,7 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import jenkins.plugins.http_request.HttpRequest;
+import jenkins.plugins.http_request.HttpRequestGlobalConfig;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -65,7 +66,7 @@ public class BasicDigestAuthentication extends AbstractDescribableImpl<BasicDige
     public static class BasicDigestAuthenticationDescriptor extends Descriptor<BasicDigestAuthentication> {
 
         public FormValidation doCheckKeyName(@QueryParameter String value) {
-            return HttpRequest.DescriptorImpl.validateKeyName(value);
+            return HttpRequestGlobalConfig.get().checkKeyName(value);
         }
 
         public FormValidation doCheckUserName(@QueryParameter String value) {

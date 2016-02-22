@@ -2,6 +2,7 @@ package jenkins.plugins.http_request;
 
 import hudson.Extension;
 import hudson.XmlFile;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.util.List;
@@ -75,4 +76,23 @@ public class HttpRequestGlobalConfig extends GlobalConfiguration {
         }
         return null;
     }
+
+    public FormValidation checkKeyName(String value) {
+        List<Authenticator> list = getAuthentications();
+
+        int count = 0;
+        for (Authenticator basicAuthentication : list) {
+            if (basicAuthentication.getKeyName().equals(value)) {
+                count++;
+            }
+        }
+
+        if (count > 1) {
+            return FormValidation.error("The Key Name must be unique");
+        }
+
+        return FormValidation.validateRequired(value);
+
+    }
+
 }

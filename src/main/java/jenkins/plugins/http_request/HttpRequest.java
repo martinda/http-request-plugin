@@ -410,28 +410,6 @@ public class HttpRequest extends Builder {
             return FormValidation.ok();
         }
 
-        public FormValidation doValidateKeyName(@QueryParameter String value) {
-            return validateKeyName(value);
-        }
-
-        public static FormValidation validateKeyName(String value) {
-            List<Authenticator> list = HttpRequestGlobalConfig.get().getAuthentications();
-
-            int count = 0;
-            for (Authenticator basicAuthentication : list) {
-                if (basicAuthentication.getKeyName().equals(value)) {
-                    count++;
-                }
-            }
-
-            if (count > 1) {
-                return FormValidation.error("The Key Name must be unique");
-            }
-
-            return FormValidation.validateRequired(value);
-
-        }
-
         public static List<Range<Integer>> parseToRange(String value) {
             List<Range<Integer>> validRanges = new ArrayList<Range<Integer>>();
 

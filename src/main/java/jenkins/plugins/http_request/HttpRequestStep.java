@@ -189,10 +189,6 @@ public final class HttpRequestStep extends AbstractStepImpl {
             return HttpRequest.DescriptorImpl.fillAuthenticationItems();
         }
 
-        public FormValidation doValidateKeyName(@QueryParameter String value) {
-            return HttpRequest.DescriptorImpl.validateKeyName(value);
-        }
-
         public FormValidation doCheckValidResponseCodes(@QueryParameter String value) {
             return HttpRequest.DescriptorImpl.checkValidResponseCodes(value);
         }
