@@ -469,7 +469,7 @@ public class HttpRequest extends Builder {
 
         public static FormValidation checkValidResponseCodes(String value) {
             if (value == null || value.trim().isEmpty()) {
-                return FormValidation.ok();
+                return FormValidation.error("You must provide a valid response codes value (default "+validResponseCodes+")");
             }
 
             try {
