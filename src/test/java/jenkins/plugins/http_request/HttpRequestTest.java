@@ -23,6 +23,7 @@ import org.apache.http.HttpHost;
 
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.jvnet.hudson.test.recipes.LocalData;
 
@@ -567,21 +568,7 @@ public class HttpRequestTest extends HttpRequestTestBase {
     @Test
     @LocalData
     public void backwardsCompat() throws Exception {
-        // Prepare the server
-        final HttpHost target = start();
-        final String baseURL = "http://localhost:" + target.getPort();
-
-        // Prepare HttpRequest (basic digest auth is loaded from @LocalData)
-        HttpRequest httpRequest = new HttpRequest(baseURL+"/basicAuth");
-        httpRequest.setAuthentication("keyname1");
-
-        // Run build
-        FreeStyleProject project = j.createFreeStyleProject();
-        project.getBuildersList().add(httpRequest);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-
-        // Check expectations
-        j.assertBuildStatus(Result.SUCCESS, build);
+        assertEquals(HttpRequestGlobalConfig.get().getBasicDigestAuthentications().size(),1);
     }
 
     @Test
