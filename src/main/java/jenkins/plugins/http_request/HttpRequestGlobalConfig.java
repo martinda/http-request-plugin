@@ -2,11 +2,16 @@ package jenkins.plugins.http_request;
 
 import hudson.Extension;
 import hudson.XmlFile;
+import hudson.init.InitMilestone;
+import hudson.init.Initializer;
+import hudson.model.Items;
 import hudson.util.FormValidation;
 
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -23,17 +28,50 @@ import org.kohsuke.stapler.StaplerRequest;
 @Extension
 public class HttpRequestGlobalConfig extends GlobalConfiguration {
 
+    private static final Logger LOGGER = Logger.getLogger(HttpRequestGlobalConfig.class.getName());
+
     private List<BasicDigestAuthentication> basicDigestAuthentications = new ArrayList<BasicDigestAuthentication>();
     private List<FormAuthentication> formAuthentications = new ArrayList<FormAuthentication>();
 
     public HttpRequestGlobalConfig() {
         load();
+        LOGGER.info("configfile: "+getConfigFile().getFile().getName());
+        try {
+            LOGGER.info("configfile: "+getConfigFile().asString());
+        } catch (java.io.IOException ioe) {
+            LOGGER.severe("IOException reading "+getConfigFile().getFile().getName());
+        }
+        LOGGER.info("load() (basic): "+basicDigestAuthentications.size());
+        LOGGER.info("load() (form): "+formAuthentications.size());
     }
 
+    @Initializer(before = InitMilestone.PLUGINS_STARTED)
+    public static void addAliases() {
+        LOGGER.info("Added aliases");
+        Items.XSTREAM2.addCompatibilityAlias("jenkins.plugins.http_request.HttpRequest$DescriptorImpl", HttpRequestGlobalConfig.class);
+    }
+/*
+    @Override
+    protected XmlFile getConfigFile() {
+        XmlFile f = super.getConfigFile();
+        LOGGER.info("Super getConfigFile: "+f);
+        String configName = HttpRequest.class.getName();
+        LOGGER.info("configName: "+Jenkins.getInstance().getRootDir()+"/"+configName+".xml");
+        XmlFile x = new XmlFile(new File(Jenkins.getInstance().getRootDir(),configName+".xml"));
+        LOGGER.info("x: "+x.getFile().exists());
+        try {
+            LOGGER.info("x: "+x.asString());
+        } catch (IOException ioe) {
+            LOGGER.warning("Unable to convert "+x+" to a string");
+        }
+        return x;
+    }
+*/
     @Override
     public boolean configure(StaplerRequest req, JSONObject json)
     throws FormException
     {
+        LOGGER.info("Loading config: "+json);
         req.bindJSON(this, json);
         save();
         return true;

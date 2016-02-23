@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.plugins.http__request.HttpRequest_-DescriptorImpl plugin="http_request@1.8.8">
+  <defaultHttpMode>POST</defaultHttpMode>
+  <basicDigestAuthentications>
+    <jenkins.plugins.http__request.auth.BasicDigestAuthentication>
+      <keyName>k1</keyName>
+      <userName>u1</userName>
+      <password>p1</password>
+    </jenkins.plugins.http__request.auth.BasicDigestAuthentication>
+  </basicDigestAuthentications>
+  <formAuthentications>
+    <jenkins.plugins.http__request.auth.FormAuthentication>
+      <keyName>k2</keyName>
+      <actions>
+        <jenkins.plugins.http__request.util.RequestAction>
+          <url>http://localhost:8080/</url>
+          <mode>GET</mode>
+          <params>
+            <jenkins.plugins.http__request.util.NameValuePair>
+              <name>n1</name>
+              <value>v1</value>
+            </jenkins.plugins.http__request.util.NameValuePair>
+          </params>
+        </jenkins.plugins.http__request.util.RequestAction>
+      </actions>
+    </jenkins.plugins.http__request.auth.FormAuthentication>
+  </formAuthentications>
+  <defaultReturnCodeBuildRelevant>true</defaultReturnCodeBuildRelevant>
+  <defaultLogResponseBody>true</defaultLogResponseBody>
+</jenkins.plugins.http__request.HttpRequest_-DescriptorImpl>
