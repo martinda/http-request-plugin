@@ -7,6 +7,7 @@ import hudson.model.ParametersAction;
 import hudson.model.Result;
 import hudson.model.StringParameterValue;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,10 @@ import org.apache.http.HttpHost;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 import org.jvnet.hudson.test.recipes.LocalData;
 
@@ -568,6 +573,15 @@ public class HttpRequestTest extends HttpRequestTestBase {
     @Test
     @LocalData
     public void backwardsCompat() throws Exception {
+        File rd = j.jenkins.getRootDir();
+        System.out.println("Root dir: "+rd.getAbsoluteFile());
+        for (File f : j.jenkins.getRootDir().listFiles()) {
+            System.out.println(f.getName());
+            if (f.getName().equals("config.xml") || f.getName().equals("jenkins.plugins.http_request.HttpRequest.xml")) {
+                String stringFromFile = Files.lines(f.toPath()).collect(Collectors.joining());
+                System.out.println(stringFromFile+"\n\n");
+            }
+        }
         assertEquals(1,HttpRequestGlobalConfig.get().getBasicDigestAuthentications().size());
     }
 
