@@ -568,7 +568,7 @@ public class HttpRequestTest extends HttpRequestTestBase {
     @Test
     @LocalData
     public void backwardsCompat() throws Exception {
-        assertEquals(HttpRequestGlobalConfig.get().getBasicDigestAuthentications().size(),1);
+        assertEquals(1,HttpRequestGlobalConfig.get().getBasicDigestAuthentications().size());
     }
 
     @Test
