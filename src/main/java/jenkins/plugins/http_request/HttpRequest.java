@@ -136,12 +136,23 @@ public class HttpRequest extends Builder {
         this.customHeaders = customHeaders;
     }
 
+/*
     @Initializer(before = InitMilestone.PLUGINS_STARTED)
     public static void xStreamCompatibility() {
         Items.XSTREAM2.aliasField("logResponseBody", HttpRequest.class, "consoleLogResponseBody");
         Items.XSTREAM2.aliasField("consoleLogResponseBody", HttpRequest.class, "consoleLogResponseBody");
         Items.XSTREAM2.alias("pair", HttpRequestNameValuePair.class);
     }
+    protected Object readResolve() {
+        if (customHeaders == null) {
+            customHeaders = DescriptorImpl.customHeaders;
+        }
+        if (validResponseCodes == null || validResponseCodes.trim().isEmpty()) {
+            validResponseCodes = DescriptorImpl.validResponseCodes;
+        }
+        return this;
+    }
+*/
 
     public @Nonnull String getUrl() {
         return url;
